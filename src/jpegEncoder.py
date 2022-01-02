@@ -37,16 +37,21 @@ def decimalToBin(num, arr, c):
         return decimalToBin(num, arr, c)
 
 def main():
-    global quality
+    global quality, DEBUG_MODE
 
-    if(len(sys.argv)!=2):
-        print('inputJpgFileName')
+    if(len(sys.argv)<2 or len(sys.argv)>3):
+        print('inputJpgFileName DEBUG_MODE[0 | 1]')
         print('example:')
         print('./lena.jpg')
         return
 
     srcFileName = sys.argv[1]
-    
+    if(len(sys.argv)==3):
+        if sys.argv[2] == '0' or sys.argv[2] == '1':
+            DEBUG_MODE = int(sys.argv[2])
+
+    print(DEBUG_MODE)
+
     numpy.set_printoptions(threshold=numpy.inf)
     srcImage = Image.open(srcFileName)
     orgImWidth, orgImHeight = srcImage.size
@@ -89,7 +94,6 @@ def main():
     uImageMatrix = uImageMatrix - 127
     vImageMatrix = vImageMatrix - 127
 
-
     if(quality <= 0):
         quality = 1
     if(quality > 100):
@@ -102,12 +106,14 @@ def main():
     luminanceQuantTbl[luminanceQuantTbl == 0] = 1
     luminanceQuantTbl[luminanceQuantTbl > 255] = 255
     luminanceQuantTbl = luminanceQuantTbl.reshape([8, 8]).astype(int)
-    #print('luminanceQuantTbl:\n', luminanceQuantTbl)
+    if DEBUG_MODE == 1:
+        print('luminanceQuantTbl:\n', luminanceQuantTbl)
     chrominanceQuantTbl = numpy.array(numpy.floor((std_chrominance_quant_tbl * qualityScale + 50) / 100))
     chrominanceQuantTbl[chrominanceQuantTbl == 0] = 1
     chrominanceQuantTbl[chrominanceQuantTbl > 255] = 255
     chrominanceQuantTbl = chrominanceQuantTbl.reshape([8, 8]).astype(int)
-    #print('chrominanceQuantTbl:\n', chrominanceQuantTbl)
+    if DEBUG_MODE == 1:
+        print('chrominanceQuantTbl:\n', chrominanceQuantTbl)
     blockSum = imageWidth // 8 * imageHeight // 8
 
     yDC = numpy.zeros([blockSum], dtype=int)

@@ -28,7 +28,7 @@ class JpgConfig:
 
   preview_width, preview_height = 16, 24
   offset = 64
-  debug_mode = 1
+  debug_mode = 0
   quality_img = 50
 
 config = JpgConfig()
