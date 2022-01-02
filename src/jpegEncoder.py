@@ -65,7 +65,8 @@ def main():
     if (srcImageHeight % 8 != 0):
         imageHeight = srcImageHeight // 8 * 8 + 8
 
-    print('added to: ', imageWidth, imageHeight)
+    if DEBUG_MODE == 1:
+        print('added to: ', imageWidth, imageHeight)
 
     # copy data from srcImageMatrix to addedImageMatrix
     addedImageMatrix = numpy.zeros((imageHeight, imageWidth, 3), dtype=numpy.uint8)
@@ -116,7 +117,8 @@ def main():
     duDC = numpy.zeros([blockSum], dtype=int)
     dvDC = numpy.zeros([blockSum], dtype=int)
 
-    print('blockSum = ', blockSum)
+    if DEBUG_MODE == 1:
+        print('blockSum = ', blockSum)
 
     sosBitStream = BitStream()
 
@@ -199,24 +201,32 @@ def main():
     
     if(h==31 and hp>7):
         hp = 7
+    else:
+        if(h<31 and hp>7):
+            h = h + 1
+            hp = 0
     if(w==31 and wp>7):
-        wp = 7    
+        wp = 7
+    else:
+        if(w<31 and wp>7):
+            w = w + 1
+            wp = 0
 
     if(not error):
-        print(w,wp,h,hp)
         fivebittemp, threebittemp = [0,0,0,0,0], [0,0,0]
-        binw = decimalToBin(12, fivebittemp, len(fivebittemp)-1)
-        binwp = decimalToBin(5, threebittemp, len(threebittemp)-1)
+        binw = decimalToBin(w, fivebittemp, len(fivebittemp)-1)
+        binwp = decimalToBin(wp, threebittemp, len(threebittemp)-1)
 
         fivebittemp, threebittemp = [0,0,0,0,0], [0,0,0]
-        binh = decimalToBin(18, fivebittemp, len(fivebittemp)-1)
-        binhp = decimalToBin(5, threebittemp, len(threebittemp)-1)
+        binh = decimalToBin(h, fivebittemp, len(fivebittemp)-1)
+        binhp = decimalToBin(hp, threebittemp, len(threebittemp)-1)
         
         sosBitStream.write(binw+binwp+binh+binhp,bool)
         sosBytes = sosBitStream.read(bytes)
-        print(sosBytes[-2], sosBytes[-1])
-        print(w, h)
-        print(len(sosBytes))
+        #print(sosBytes[-2], sosBytes[-1])
+        if DEBUG_MODE == 1:
+            print(w,wp,h,hp)
+        print("Byte Length {0}".format(len(sosBytes)))
         print(sosBytes.hex())
         
 
